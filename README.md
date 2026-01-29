@@ -4,10 +4,12 @@ A production-ready AI agent built with **LangGraph** that helps you find the bes
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-green)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## ✨ Features
 
+- **🌐 Modern Web UI**: Beautiful glassmorphism design with real-time progress updates
 - **Model Agnostic**: Works with Ollama, Google Gemini, OpenAI, or Anthropic
 - **Real-time Trend Analysis**: Searches DuckDuckGo for trending topics
 - **Research-Backed**: Fetches latest papers from ArXiv
@@ -63,11 +65,35 @@ GOOGLE_API_KEY=your_api_key_here
 
 ### 3. Run the Agent
 
+**Web UI (Recommended):**
+```bash
+python app.py
+```
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+**CLI Mode:**
 ```bash
 python main.py
 ```
 
-## 📖 Usage
+## 🌐 Web UI
+
+The web interface provides a modern, professional experience:
+
+- **Glassmorphism Design**: Sleek dark mode with gradient accents
+- **Real-time Progress**: WebSocket-powered live updates during generation
+- **Score Visualizations**: Animated circular progress and detailed breakdowns
+- **Smart Forms**: Tag-based keyword input with auto-save preferences
+- **Responsive**: Works beautifully on desktop and mobile
+
+### Features:
+- 📊 Trend insights display (hot topics, emerging trends, content gaps)
+- 🎯 Ranked topic cards with overall scores
+- 📈 5-dimension score breakdown per topic
+- 📋 One-click copy for topic details
+- 💾 Auto-saves your preferences locally
+
+## 📖 CLI Usage
 
 ### Interactive Mode
 
@@ -126,24 +152,30 @@ Each topic is scored on 5 dimensions (0-100):
 ## 📁 Project Structure
 
 ```
-medium_topic_agent/
-├── __init__.py
-├── agent.py              # Main LangGraph agent
-├── config.py             # Configuration management
-├── nodes/
-│   ├── input_collector.py
-│   ├── clarifier.py
-│   ├── web_searcher.py   # DuckDuckGo integration
-│   ├── arxiv_searcher.py # ArXiv integration
-│   ├── trend_analyzer.py
-│   ├── topic_generator.py
-│   └── scorer.py
-├── schemas/
-│   ├── state.py          # Agent state definition
-│   └── models.py         # Pydantic models
-└── utils/
-    ├── logger.py         # Structured logging
-    └── retry.py          # Retry logic
+├── app.py                    # FastAPI web server
+├── main.py                   # CLI entry point
+├── static/
+│   ├── index.html            # Web UI HTML
+│   ├── style.css             # Glassmorphism styles
+│   └── script.js             # Frontend logic
+└── medium_topic_agent/
+    ├── __init__.py
+    ├── agent.py              # Main LangGraph agent
+    ├── config.py             # Configuration management
+    ├── nodes/
+    │   ├── input_collector.py
+    │   ├── clarifier.py
+    │   ├── web_searcher.py   # DuckDuckGo integration
+    │   ├── arxiv_searcher.py # ArXiv integration
+    │   ├── trend_analyzer.py
+    │   ├── topic_generator.py
+    │   └── scorer.py
+    ├── schemas/
+    │   ├── state.py          # Agent state definition
+    │   └── models.py         # Pydantic models
+    └── utils/
+        ├── logger.py         # Structured logging
+        └── retry.py          # Retry logic
 ```
 
 ## 🤝 Contributing
@@ -153,3 +185,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📄 License
 
 MIT License - feel free to use this in your projects!
+

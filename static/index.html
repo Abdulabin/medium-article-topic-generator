@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medium Topic Generator | AI-Powered Article Ideas</title>
+    <meta name="description" content="Generate trending, research-backed topic ideas for your Medium articles using AI">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">📝</span>
+                <span class="logo-text">TopicGen</span>
+            </div>
+            <p class="tagline">AI-powered topic suggestions for Medium writers</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Input Section -->
+            <section class="input-section glass-card" id="inputSection">
+                <h2 class="section-title">
+                    <span class="title-icon">✨</span>
+                    Tell me about yourself
+                </h2>
+                
+                <form id="topicForm" class="topic-form">
+                    <!-- Background -->
+                    <div class="form-group">
+                        <label for="background" class="form-label">
+                            <span class="label-icon">👤</span>
+                            Professional Background
+                        </label>
+                        <textarea 
+                            id="background" 
+                            name="background" 
+                            class="form-input form-textarea"
+                            placeholder="e.g., Software engineer with 5 years experience in Python and Machine Learning. I've built production ML systems at scale..."
+                            required
+                            minlength="10"
+                            rows="3"
+                        ></textarea>
+                        <span class="form-hint">Describe your expertise and experience</span>
+                    </div>
+
+                    <!-- Keywords -->
+                    <div class="form-group">
+                        <label for="keywordsInput" class="form-label">
+                            <span class="label-icon">🔑</span>
+                            Topics of Interest
+                        </label>
+                        <div class="keywords-container">
+                            <div class="keywords-tags" id="keywordsTags"></div>
+                            <input 
+                                type="text" 
+                                id="keywordsInput" 
+                                class="keywords-input"
+                                placeholder="Type and press Enter..."
+                            >
+                        </div>
+                        <input type="hidden" id="keywords" name="keywords">
+                        <span class="form-hint">Add 1-10 keywords (press Enter after each)</span>
+                    </div>
+
+                    <!-- Target Audience -->
+                    <div class="form-group">
+                        <label for="audience" class="form-label">
+                            <span class="label-icon">👥</span>
+                            Target Audience
+                        </label>
+                        <select id="audience" name="audience" class="form-input form-select">
+                            <option value="general tech audience">General Tech Audience</option>
+                            <option value="beginner developers">Beginner Developers</option>
+                            <option value="intermediate developers">Intermediate Developers</option>
+                            <option value="senior developers">Senior Developers</option>
+                            <option value="data scientists">Data Scientists</option>
+                            <option value="tech managers">Tech Managers / Leaders</option>
+                            <option value="entrepreneurs">Entrepreneurs & Founders</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            id="customAudience" 
+                            class="form-input custom-audience hidden"
+                            placeholder="Enter your target audience..."
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Generate Topics</span>
+                        <span class="btn-icon">🚀</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section glass-card hidden" id="progressSection">
+                <div class="progress-header">
+                    <div class="progress-spinner"></div>
+                    <h2 class="progress-title">Generating Topics...</h2>
+                </div>
+                <p class="progress-message" id="progressMessage">Starting analysis...</p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="progress-steps">
+                    <div class="progress-step" data-step="search">
+                        <span class="step-icon">🔍</span>
+                        <span class="step-text">Web Search</span>
+                    </div>
+                    <div class="progress-step" data-step="research">
+                        <span class="step-icon">📚</span>
+                        <span class="step-text">Research</span>
+                    </div>
+                    <div class="progress-step" data-step="analyze">
+                        <span class="step-icon">📊</span>
+                        <span class="step-text">Analysis</span>
+                    </div>
+                    <div class="progress-step" data-step="generate">
+                        <span class="step-icon">💡</span>
+                        <span class="step-text">Generate</span>
+                    </div>
+                    <div class="progress-step" data-step="score">
+                        <span class="step-icon">⭐</span>
+                        <span class="step-text">Scoring</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="resultsSection">
+                <!-- Trend Insights -->
+                <div class="insights-card glass-card" id="insightsCard">
+                    <h2 class="section-title">
+                        <span class="title-icon">📊</span>
+                        Trend Insights
+                    </h2>
+                    <div class="insights-content" id="insightsContent"></div>
+                </div>
+
+                <!-- Topics Grid -->
+                <div class="topics-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">🎯</span>
+                        Topic Suggestions
+                    </h2>
+                    <div class="topics-meta" id="topicsMeta"></div>
+                </div>
+                <div class="topics-grid" id="topicsGrid"></div>
+
+                <!-- Actions -->
+                <div class="results-actions">
+                    <button class="action-btn secondary" id="newSearchBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">New Search</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by <strong>LangGraph</strong> & <strong>DuckDuckGo</strong> & <strong>ArXiv</strong></p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
