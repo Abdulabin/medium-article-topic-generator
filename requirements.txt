@@ -1,0 +1,28 @@
+# LangGraph Agent Framework
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-core>=0.3.0
+
+# Model Providers (model-agnostic via init_chat_model)
+langchain-google-genai>=2.0.0
+langchain-ollama>=0.2.0
+
+# Web Search & Research
+duckduckgo-search>=6.0.0
+arxiv>=2.1.0
+
+# Data Validation
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Configuration
+python-dotenv>=1.0.0
+
+# Production Logging
+structlog>=24.0.0
+
+# CLI Interface
+rich>=13.0.0
+
+# Retry Logic
+tenacity>=8.0.0

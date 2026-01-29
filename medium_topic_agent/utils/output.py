@@ -1,0 +1,163 @@
+"""Output utilities for saving generated topics to markdown files."""
+
+import os
+from datetime import datetime
+from pathlib import Path
+
+from medium_topic_agent.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+
+def _format_topic_markdown(scored_topic: dict, rank: int) -> str:
+    """Format a single scored topic as markdown."""
+    topic = scored_topic.get("topic", scored_topic)
+    scores = scored_topic.get("scores", {})
+    overall_score = scored_topic.get("overall_score", 0)
+    reasoning = scored_topic.get("reasoning", "")
+    recommendations = scored_topic.get("recommendations", [])
+    
+    # Build markdown for this topic
+    md = f"""### #{rank}: {topic.get("title", "Untitled")}
+
+> *"{topic.get("hook", "")}"*
+
+**Description:** {topic.get("description", "")}
+
+| Attribute | Value |
+|-----------|-------|
+| **Unique Angle** | {topic.get("unique_angle", "N/A")} |
+| **Target Audience** | {topic.get("target_audience", "N/A")} |
+| **Article Type** | {topic.get("article_type", "article")} |
+| **Est. Read Time** | {topic.get("estimated_read_time", "5 min")} |
+
+#### Scores
+
+| Metric | Score |
+|--------|-------|
+| 📈 Trend | {scores.get("trend_score", 0)}/100 |
+| ✨ Uniqueness | {scores.get("uniqueness_score", 0)}/100 |
+| 💬 Engagement | {scores.get("engagement_score", 0)}/100 |
+| 👤 Author Fit | {scores.get("author_fit_score", 0)}/100 |
+| 📚 Research Depth | {scores.get("research_depth_score", 0)}/100 |
+| **Overall** | **{overall_score:.1f}/100** |
+
+"""
+    
+    if reasoning:
+        md += f"**Why this topic:** {reasoning}\n\n"
+    
+    if recommendations:
+        md += "**Recommendations:**\n"
+        for rec in recommendations:
+            md += f"- {rec}\n"
+        md += "\n"
+    
+    md += "---\n\n"
+    return md
+
+
+def save_topics_to_markdown(
+    result: dict,
+    background: str,
+    keywords: list[str],
+    output_dir: str = "generated_topics"
+) -> str:
+    """Save the generated topics to a markdown file.
+    
+    Args:
+        result: The result dictionary from the agent.
+        background: User's background.
+        keywords: List of keywords used.
+        output_dir: Directory to save the file in.
+        
+    Returns:
+        Path to the saved file.
+    """
+    # Create output directory if it doesn't exist
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    # Generate filename with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    keywords_slug = "_".join(keywords[:3]).replace(" ", "-").lower()[:30]
+    filename = f"topics_{keywords_slug}_{timestamp}.md"
+    filepath = output_path / filename
+    
+    # Build markdown content
+    topics = result.get("topics", [])
+    trend_insights = result.get("trend_insights", {})
+    metadata = result.get("metadata", {})
+    
+    md_content = f"""# Medium Article Topic Suggestions
+
+**Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+## Input Parameters
+
+| Parameter | Value |
+|-----------|-------|
+| **Background** | {background} |
+| **Keywords** | {", ".join(keywords)} |
+
+## Analysis Summary
+
+- 🔍 **Web Results Analyzed:** {metadata.get("web_results_count", 0)}
+- 📄 **Research Papers Reviewed:** {metadata.get("arxiv_papers_count", 0)}
+- 💡 **Topics Generated:** {len(topics)}
+
+"""
+    
+    # Add trend insights
+    if trend_insights:
+        md_content += "## Trend Insights\n\n"
+        
+        if trend_insights.get("key_insights"):
+            md_content += f"{trend_insights['key_insights']}\n\n"
+        
+        if trend_insights.get("hot_topics"):
+            md_content += "### 🔥 Hot Topics\n"
+            for topic in trend_insights["hot_topics"]:
+                md_content += f"- {topic}\n"
+            md_content += "\n"
+        
+        if trend_insights.get("content_gaps"):
+            md_content += "### 🎯 Content Gaps (Opportunities)\n"
+            for gap in trend_insights["content_gaps"]:
+                md_content += f"- {gap}\n"
+            md_content += "\n"
+        
+        if trend_insights.get("emerging_trends"):
+            md_content += "### 📈 Emerging Trends\n"
+            for trend in trend_insights["emerging_trends"]:
+                md_content += f"- {trend}\n"
+            md_content += "\n"
+        
+        if trend_insights.get("research_frontiers"):
+            md_content += "### 🔬 Research Frontiers\n"
+            for frontier in trend_insights["research_frontiers"]:
+                md_content += f"- {frontier}\n"
+            md_content += "\n"
+    
+    # Add ranked topics
+    md_content += "## Ranked Topic Suggestions\n\n"
+    
+    if not topics:
+        md_content += "> No topics were generated. Try different keywords.\n"
+    else:
+        for i, topic in enumerate(topics, 1):
+            rank = topic.get("rank", i)
+            md_content += _format_topic_markdown(topic, rank)
+    
+    # Add footer
+    md_content += """---
+
+*Generated by Medium Article Topic Suggestion Agent*
+"""
+    
+    # Write to file
+    filepath.write_text(md_content, encoding="utf-8")
+    
+    logger.info("topics_saved_to_markdown", filepath=str(filepath))
+    
+    return str(filepath)
